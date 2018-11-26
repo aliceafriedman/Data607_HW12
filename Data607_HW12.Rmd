@@ -26,12 +26,13 @@ glimpse(flights)
 #Normalize the flights database
 We will create a small relational database using a subset of the flights data.
 
-```{r, message=FALSE}
+```{r, results='hide', message=FALSE, warning=FALSE}
 remove(flights)
-
 library(nycflights13)
 library(dplyr)
 library(tidyr)
+```
+```{r}
 glimpse(flights)
 
 flights_raw <- flights
@@ -57,12 +58,14 @@ flights <- flights_raw %>%
 Now we have two tables, which could be linked using the airport code as a primary/foreign key in a relational database. (We don't have the data, but one could imagine including more properties in the airports table, for example, full name, city, number of terminals, etc.)
 
 We can visualize the airports as nodes and scheduled flights as relationships between them.
-```{r}
+```{r, results='hide', message=FALSE, warning=FALSE}
 library(igraph)
-
+```
+```{r}
 g <- graph_from_data_frame(flights, directed=TRUE, vertices=airports)
 plot.igraph(g)
 ```
+
 This graph is impossible to read! To get a smaller sense, let's look at a smaller subset of the airports, such as just flights that are scheduled at least once a day.
 ```{r}
 daily_flights <- flights %>% filter(count >=365)
@@ -110,8 +113,6 @@ for(i in 1:length(daily_flights$flight)){
   dest = getOrCreateNode(graph, "airports", airportCode = daily_flights[i,]$dest)
   createRel(origin, "Flights", dest)
 }
-
-browse(graph)
 ```
 
 ![Neo4J Browser Results](graph.png)
